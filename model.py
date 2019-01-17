@@ -4,7 +4,7 @@ from keras.regularizers import l2 as L2
 from keras.layers import Dropout, Reshape
 
 h, w = 512, 512
-lmbda = 1e-5
+lmbda = 1e-7
 
 conv_params = {
 	'activation': 'relu',
@@ -34,7 +34,7 @@ def deconv_block(input_layer, num_filter, conv_block):
 def create_model(num_classes, num_channels):
 	inputs = Input(shape=(h, w, num_channels))
 	last_layer = inputs
-	num_filter = 8
+	num_filter = 64
 	
 	num_blocks = 4
 	conv_blocks = []

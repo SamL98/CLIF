@@ -22,7 +22,8 @@ _IMG_FMT = '%s_img_%06d.png'
 _GT_FMT = '%s_pixeltruth_%06d.mat'
 _GT_KEY = 'ground_truth'
 
-_PIX_MEAN = 34.417
+_PIX_MEAN = 34.419
+_PIX_STDEV = 31.886
 _NUM_CHANNELS = 1
 
 def load_image(imset, idx):
@@ -33,7 +34,7 @@ def load_gt(imset, idx):
 	
 def prepro_image(img):
 	x = np.zeros((_DS_INFO['imsize'], _DS_INFO['imsize'], _NUM_CHANNELS), dtype=np.float32)
-	x[...,0] = (img[:]-_PIX_MEAN)/255.
+	x[...,0] = (img[:]-_PIX_MEAN)/_PIX_STDEV
 	return x
 	#grads = get_grads(img)
 	#x[...,1:] = grads[...,:2]

@@ -2,7 +2,7 @@ from keras.models import model_from_json
 from os.path import join
 
 from load_data import prepro_gt, load_image, load_gt, _DS_INFO, prepro_image
-from gradients import get_grads
+from postprocessing import postpro
 
 import numpy as np
 from numpy import random
@@ -30,23 +30,50 @@ def display_random_prediction(imset, idx=None, data=None):
 	if data is None:
 		X = np.expand_dims(prepro_image(img), axis=0)
 		mask = prepro_gt(gt)[...,1]
-		pred = np.argmax(model.predict(X)[0], axis=2)
+		probs = model.predict(X)[0]
+		pred = np.argmax(probs, axis=2)
 	else:
 		X, mask, pred = data
 	
+	'''
 	fig, ax = plt.subplots(1, 3)
 	ax[0].imshow(img, 'gray')
 	ax[0].set_title('Original')
+	ax[0].axis('off')
 	
 	ax[1].imshow(img, 'gray')
 	ax[1].imshow(pred, 'OrRd', alpha=0.3)
 	ax[1].set_title('Predicted')
+	ax[1].axis('off')
 	
 	ax[2].imshow(img, 'gray')
 	ax[2].imshow(mask, 'OrRd', alpha=0.3)
 	ax[2].set_title('Ground Truth')
+	ax[2].axis('off')
+	'''
 	
-	fig.savefig('%s_%s_%d.png' % (name, imset, idx))
+	fig, ax = plt.subplots(2, 2)
+	ax[0,0].imshow(img, 'gray')
+	ax[0,0].set_title('Original')
+	ax[0,0].axis('off')
+
+	ax[1,0].imshow(img, 'gray')
+	ax[1,0].imshow(pred, 'OrRd', alpha=0.3)
+	ax[1,0].set_title('Predicted')
+	ax[1,0].axis('off')
+	
+	ax[0,1].imshow(img, 'gray')
+	ax[0,1].imshow(mask, 'OrRd', alpha=0.3)
+	ax[0,1].set_title('Ground Truth')
+	ax[0,1].axis('off')
+	
+	probs = np.max(probs, axis=2)
+	probs[pred==0] = 0
+	ax[1,1].imshow(probs, 'jet')
+	ax[1,1].set_title('Predicted Probability')
+	ax[1,1].axis('off')
+	
+	#fig.savefig('%s_%s_%d.png' % (name, imset, idx), bbox_inches='tight')
 	plt.show()
 	
 def display_prediction_w_building(imset):
